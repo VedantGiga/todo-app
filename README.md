@@ -11,11 +11,6 @@ src/
 ├── hooks/
 ├── utils/
 └── styles/
-server/
-├── routes/
-├── models/
-├── middleware/
-└── config/
 database/
 ├── models/
 ├── migrations/
