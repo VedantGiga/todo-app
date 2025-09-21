@@ -1,0 +1,134 @@
+**Setting Up a New Express Server with API Routing for MongoDB**
+
+### Prerequisites
+
+* Node.js (version 16 or higher)
+* MongoDB (local or remote)
+* Express.js (version 4 or higher)
+* Mongoose (version 6 or higher)
+
+### Step 1: Create a new Node.js project
+
+Create a new directory for your project and navigate to it in your terminal:
+```bash
+mkdir express-mongodb-api
+cd express-mongodb-api
+```
+Initialize a new Node.js project:
+```bash
+npm init -y
+```
+### Step 2: Install required dependencies
+
+Install Express.js and Mongoose:
+```bash
+npm install express mongoose
+```
+### Step 3: Create a new Express server
+
+Create a new file called `app.js`:
+```bash
+touch app.js
+```
+Add the following code to `app.js`:
+```javascript
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
+
+// MongoDB connection
+mongoose.connect('mongodb://localhost/mydatabase', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Get the connection instance
+const db = mongoose.connection;
+
+// Bind the connection to the 'error' event
+db.on('error', (err) => {
+  console.error(err);
+});
+
+// Bind the connection to the 'open' event
+db.once('open', () => {
+  console.log('Connected to MongoDB');
+});
+
+// Middleware
+app.use(express.json());
+
+// API routes
+const userRoute = require('./routes/user.route');
+app.use('/api/users', userRoute);
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+```
+### Step 4: Create API routes
+
+Create a new directory called `routes` and add a new file called `user.route.js`:
+```bash
+mkdir routes
+touch routes/user.route.js
+```
+Add the following code to `user.route.js`:
+```javascript
+const express = require('express');
+const router = express.Router();
+const User = require('../models/user.model');
+
+// GET /api/users
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find().exec();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+});
+
+// POST /api/users
+router.post('/', async (req, res) => {
+  try {
+    const user = new User(req.body);
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ message: 'Error creating user' });
+  }
+});
+
+module.exports = router;
+```
+### Step 5: Create a user model
+
+Create a new file called `user.model.js`:
+```bash
+touch models/user.model.js
+```
+Add the following code to `user.model.js`:
+```javascript
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+});
+
+module.exports = mongoose.model('User', userSchema);
+```
+### Step 6: Run the server
+
+Run the server with the following command:
+```
+node app.js
+```
+The server should now be listening on port 3000. You can test the API routes using a tool like Postman or curl.
+
+### Example Use Cases
+
+* GET /api/users: Retrieves a list of all users
+* POST /api/users: Creates a new user
+
+Note: This is a basic example and you should consider implementing authentication and authorization mechanisms to secure your API.
