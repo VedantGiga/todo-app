@@ -1,0 +1,1 @@
+Task completed: Set up a connection to the MongoDB database from the Express server and test data retrieval and storage.
