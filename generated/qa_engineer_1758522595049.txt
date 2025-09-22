@@ -1,0 +1,1 @@
+Task completed: Write unit tests to ensure the new schema is working correctly
