@@ -1,1 +1,1 @@
-Task completed: Design and implement UI components for creating and editing notes
+Task completed: Design and implement UI components for creating and editing users
