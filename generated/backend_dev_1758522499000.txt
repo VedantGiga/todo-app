@@ -1,0 +1,181 @@
+**Note API Endpoints**
+======================
+
+### Overview
+
+This API provides endpoints for creating, reading, updating, and deleting notes.
+
+### Endpoints
+
+#### 1. Create a Note
+
+* **Endpoint:** `/notes`
+* **Method:** `POST`
+* **Request Body:**
+	+ `title` (string): Note title
+	+ `content` (string): Note content
+* **Response:** `201 Created` with the created note object
+
+#### 2. Get All Notes
+
+* **Endpoint:** `/notes`
+* **Method:** `GET`
+* **Response:** `200 OK` with a list of all notes
+
+#### 3. Get a Note by ID
+
+* **Endpoint:** `/notes/{id}`
+* **Method:** `GET`
+* **Path Parameters:**
+	+ `id` (integer): Note ID
+* **Response:** `200 OK` with the note object, or `404 Not Found` if the note does not exist
+
+#### 4. Update a Note
+
+* **Endpoint:** `/notes/{id}`
+* **Method:** `PUT`
+* **Path Parameters:**
+	+ `id` (integer): Note ID
+* **Request Body:**
+	+ `title` (string): New note title
+	+ `content` (string): New note content
+* **Response:** `200 OK` with the updated note object, or `404 Not Found` if the note does not exist
+
+#### 5. Delete a Note
+
+* **Endpoint:** `/notes/{id}`
+* **Method:** `DELETE`
+* **Path Parameters:**
+	+ `id` (integer): Note ID
+* **Response:** `204 No Content` if the note was deleted successfully, or `404 Not Found` if the note does not exist
+
+### API Implementation (Node.js and Express.js)
+
+```javascript
+// Import required modules
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/notes', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Define note schema
+const noteSchema = new mongoose.Schema({
+  title: String,
+  content: String
+});
+
+// Create note model
+const Note = mongoose.model('Note', noteSchema);
+
+// Create API endpoints
+app.use(express.json());
+
+// Create a note
+app.post('/notes', (req, res) => {
+  const note = new Note(req.body);
+  note.save((err, note) => {
+    if (err) {
+      res.status(500).send({ message: 'Error creating note' });
+    } else {
+      res.status(201).send(note);
+    }
+  });
+});
+
+// Get all notes
+app.get('/notes', (req, res) => {
+  Note.find((err, notes) => {
+    if (err) {
+      res.status(500).send({ message: 'Error fetching notes' });
+    } else {
+      res.send(notes);
+    }
+  });
+});
+
+// Get a note by ID
+app.get('/notes/:id', (req, res) => {
+  const id = req.params.id;
+  Note.findById(id, (err, note) => {
+    if (err) {
+      res.status(500).send({ message: 'Error fetching note' });
+    } else if (!note) {
+      res.status(404).send({ message: 'Note not found' });
+    } else {
+      res.send(note);
+    }
+  });
+});
+
+// Update a note
+app.put('/notes/:id', (req, res) => {
+  const id = req.params.id;
+  Note.findByIdAndUpdate(id, req.body, { new: true }, (err, note) => {
+    if (err) {
+      res.status(500).send({ message: 'Error updating note' });
+    } else if (!note) {
+      res.status(404).send({ message: 'Note not found' });
+    } else {
+      res.send(note);
+    }
+  });
+});
+
+// Delete a note
+app.delete('/notes/:id', (req, res) => {
+  const id = req.params.id;
+  Note.findByIdAndDelete(id, (err, note) => {
+    if (err) {
+      res.status(500).send({ message: 'Error deleting note' });
+    } else if (!note) {
+      res.status(404).send({ message: 'Note not found' });
+    } else {
+      res.status(204).send();
+    }
+  });
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server started on port ${port}`);
+});
+```
+
+### Example Use Cases
+
+1. **Create a note**:
+```bash
+curl -X POST \
+  http://localhost:3000/notes \
+  -H 'Content-Type: application/json' \
+  -d '{"title": "My note", "content": "This is my note"}'
+```
+
+2. **Get all notes**:
+```bash
+curl -X GET \
+  http://localhost:3000/notes
+```
+
+3. **Get a note by ID**:
+```bash
+curl -X GET \
+  http://localhost:3000/notes/12345
+```
+
+4. **Update a note**:
+```bash
+curl -X PUT \
+  http://localhost:3000/notes/12345 \
+  -H 'Content-Type: application/json' \
+  -d '{"title": "My updated note", "content": "This is my updated note"}'
+```
+
+5. **Delete a note**:
+```bash
+curl -X DELETE \
+  http://localhost:3000/notes/12345
+```
