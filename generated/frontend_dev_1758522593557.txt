@@ -1,0 +1,261 @@
+**Task: Design and Implement UI Components for Listing and Viewing Notes**
+
+**Overview**
+
+In this task, we will design and implement UI components for listing and viewing notes using HTML, CSS, and JavaScript. The UI components will include a list of notes, a note detail view, and a note editor.
+
+**Design Requirements**
+
+1. List of notes:
+	* Display a list of notes with title, content, and date created.
+	* Each note should have a delete button.
+2. Note detail view:
+	* Display the selected note's title, content, and date created.
+	* Allow editing of the note's title and content.
+3. Note editor:
+	* Allow creating new notes with title and content.
+	* Allow editing of existing notes' title and content.
+
+**Implementation**
+
+### HTML Structure
+
+Create a new HTML file called `index.html` and add the following code:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Notes App</h1>
+    </header>
+    <main>
+        <section class="notes-list">
+            <h2>Notes List</h2>
+            <ul id="notes-list"></ul>
+        </section>
+        <section class="note-detail">
+            <h2>Note Detail</h2>
+            <div id="note-detail-view">
+                <h3 id="note-title"></h3>
+                <p id="note-content"></p>
+                <p id="note-date-created"></p>
+                <button id="delete-note-btn">Delete Note</button>
+                <button id="edit-note-btn">Edit Note</button>
+            </div>
+            <div id="note-editor">
+                <h3>Update Note</h3>
+                <input id="note-title-input" type="text" placeholder="Note Title">
+                <textarea id="note-content-input" placeholder="Note Content"></textarea>
+                <button id="update-note-btn">Update Note</button>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+### CSS Styles
+
+Create a new CSS file called `styles.css` and add the following code:
+```css
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.notes-list {
+    background-color: #fff;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    width: 50%;
+}
+
+.notes-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notes-list li {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.notes-list li:last-child {
+    border-bottom: none;
+}
+
+.note-detail {
+    background-color: #fff;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    width: 50%;
+}
+
+.note-editor {
+    display: none;
+}
+
+.note-editor input, .note-editor textarea {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+}
+
+.note-editor button {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    border: none;
+    cursor: pointer;
+}
+
+.note-editor button:hover {
+    background-color: #444;
+}
+```
+
+### JavaScript Implementation
+
+Create a new JavaScript file called `script.js` and add the following code:
+```javascript
+// Note class
+class Note {
+    constructor(title, content, dateCreated) {
+        this.title = title;
+        this.content = content;
+        this.dateCreated = dateCreated;
+    }
+}
+
+// Notes list
+class NotesList {
+    constructor() {
+        this.notes = [];
+    }
+
+    addNote(note) {
+        this.notes.push(note);
+        this.render();
+    }
+
+    removeNote(note) {
+        const index = this.notes.indexOf(note);
+        if (index !== -1) {
+            this.notes.splice(index, 1);
+            this.render();
+        }
+    }
+
+    render() {
+        const notesListElement = document.getElementById('notes-list');
+        notesListElement.innerHTML = '';
+        this.notes.forEach(note => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <h3>${note.title}</h3>
+                <p>${note.content}</p>
+                <p>${note.dateCreated}</p>
+                <button class="delete-note-btn" data-note-id="${note.id}">Delete Note</button>
+            `;
+            notesListElement.appendChild(listItem);
+        });
+    }
+}
+
+// Initialize notes list
+const notesList = new NotesList();
+
+// Add event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const notesListElement = document.getElementById('notes-list');
+    notesListElement.addEventListener('click', e => {
+        if (e.target.classList.contains('delete-note-btn')) {
+            const noteId = e.target.dataset.noteId;
+            const note = notesList.notes.find(note => note.id === parseInt(noteId));
+            if (note) {
+                notesList.removeNote(note);
+            }
+        }
+    });
+
+    const noteDetailElement = document.getElementById('note-detail-view');
+    noteDetailElement.addEventListener('click', e => {
+        if (e.target.classList.contains('edit-note-btn')) {
+            const note = notesList.notes.find(note => note.id === parseInt(e.target.dataset.noteId));
+            if (note) {
+                const noteTitleInput = document.getElementById('note-title-input');
+                const noteContentInput = document.getElementById('note-content-input');
+                noteTitleInput.value = note.title;
+                noteContentInput.value = note.content;
+                document.getElementById('note-editor').style.display = 'block';
+            }
+        }
+    });
+
+    const updateNoteBtn = document.getElementById('update-note-btn');
+    updateNoteBtn.addEventListener('click', e => {
+        const noteTitleInput = document.getElementById('note-title-input');
+        const noteContentInput = document.getElementById('note-content-input');
+        const noteId = parseInt(e.target.dataset.noteId);
+        const note = notesList.notes.find(note => note.id === noteId);
+        if (note) {
+            note.title = noteTitleInput.value;
+            note.content = noteContentInput.value;
+            notesList.render();
+            document.getElementById('note-editor').style.display = 'none';
+        }
+    });
+});
+
+// Create new note
+const createNoteBtn = document.getElementById('create-note-btn');
+createNoteBtn.addEventListener('click', e => {
+    const noteTitleInput = document.getElementById('note-title-input');
+    const noteContentInput = document.getElementById('note-content-input');
+    const note = new Note(noteTitleInput.value, noteContentInput.value, new Date().toISOString());
+    notesList.addNote(note);
+    noteTitleInput.value = '';
+    noteContentInput.value = '';
+});
+```
+### Example Use Cases
+
+1. Create a new note:
+	* Click the "Create Note" button.
+	* Enter a title and content for the note.
+	* Click the "Add Note" button.
+2. View and edit a note:
+	* Click on a note in the list.
+	* Click the "Edit Note" button.
+	* Update the title and content of the note.
+	* Click the "Update Note" button.
+3. Delete a note:
+	* Click on a note in the list.
+	* Click the "Delete Note" button.
+
+### Conclusion
+
+In this task, we designed and implemented UI components for listing and viewing notes using HTML, CSS, and JavaScript. The UI components include a list of notes, a note detail view, and a note editor. We also added event listeners to handle user interactions and implemented a NotesList class to manage the notes.
