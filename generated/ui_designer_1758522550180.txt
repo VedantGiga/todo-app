@@ -1,0 +1,1 @@
+Task completed: Create visual representations of the new schema for notes and users
