@@ -1,0 +1,73 @@
+**Testing Plan for New Schema**
+
+**Objective:** To ensure the new schema is working correctly by identifying and addressing any potential issues or bugs.
+
+**Scope:** This testing plan will focus on the following areas:
+
+1. Data integrity
+2. Data consistency
+3. Data relationships
+4. Query performance
+5. Error handling
+
+**Testing Approach:**
+
+1. **Unit Testing:** Test individual components of the schema, such as tables, views, and stored procedures, to ensure they are working correctly in isolation.
+2. **Integration Testing:** Test how different components of the schema interact with each other to ensure data is being exchanged correctly.
+3. **System Testing:** Test the entire system to ensure it is working as expected and meets the requirements.
+4. **Regression Testing:** Perform repeat testing to ensure that changes to the schema have not introduced new bugs or affected existing functionality.
+
+**Test Scenarios:**
+
+1. **Happy Path Scenarios:**
+	* Insert data into a table
+	* Update data in a table
+	* Delete data from a table
+	* Query data from a table
+	* Use a stored procedure to perform an operation
+2. **Error Handling Scenarios:**
+	* Insert invalid data into a table
+	* Update data that does not exist in a table
+	* Delete data from a table that does not exist
+	* Run a query with invalid syntax
+	* Use a stored procedure with invalid parameters
+3. **Edge Case Scenarios:**
+	* Insert data with duplicate keys
+	* Update data with conflicting data types
+	* Delete data from a table with dependencies
+	* Query data with complex joins
+
+**Testing Tools:**
+
+1. **SQL Client Tools:** Use tools like SQL Server Management Studio, Oracle SQL Developer, or MySQL Workbench to execute SQL queries and test the schema.
+2. **Automated Testing Tools:** Use tools like Jenkins, Travis CI, or CircleCI to automate testing and ensure consistency.
+3. **API Testing Tools:** Use tools like Postman, SoapUI, or RestAssured to test APIs that interact with the schema.
+
+**Testing Metrics:**
+
+1. **Test Coverage:** Measure the percentage of the schema that has been tested.
+2. **Test Pass Rate:** Measure the percentage of tests that have passed.
+3. **Test Failure Rate:** Measure the percentage of tests that have failed.
+4. **Error Rate:** Measure the number of errors encountered during testing.
+
+**Testing Schedule:**
+
+1. **Unit Testing:** Complete unit testing within 2 days of schema implementation.
+2. **Integration Testing:** Complete integration testing within 3 days of unit testing.
+3. **System Testing:** Complete system testing within 4 days of integration testing.
+4. **Regression Testing:** Perform regression testing on a bi-weekly basis to ensure changes have not introduced new bugs.
+
+**Testing Resources:**
+
+1. **Development Team:** Provide the development team with the necessary resources and training to perform testing.
+2. **Quality Assurance Team:** Provide the quality assurance team with the necessary resources and training to perform testing.
+3. **Test Environment:** Ensure a suitable test environment is available to perform testing.
+
+**Testing Deliverables:**
+
+1. **Test Plan:** Document the test plan and testing approach.
+2. **Test Cases:** Document the test cases and test scenarios.
+3. **Test Results:** Document the test results, including pass rate, failure rate, and error rate.
+4. **Test Report:** Document the final test report, including any issues found and recommendations for improvements.
+
+By following this testing plan, we can ensure the new schema is working correctly and meet the requirements of the project.
