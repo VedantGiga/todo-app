@@ -1,0 +1,117 @@
+**Database Design and Implementation**
+
+### Overview
+
+In this task, we will design and implement two new database tables: `users` and `notes`. The `users` table will store information about the users, while the `notes` table will store the notes that the users will be able to create, read, update, or delete.
+
+### Database Schema
+
+We will use a relational database management system (RDBMS) like MySQL for this task. The schema for the `users` and `notes` tables is as follows:
+
+```sql
+-- Create users table
+CREATE TABLE users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create notes table
+CREATE TABLE notes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  user_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+```
+
+### Explanation
+
+- The `users` table has the following columns:
+  - `id`: a unique identifier for each user, which is an auto-incrementing integer.
+  - `username`: the username chosen by the user.
+  - `email`: the email address of the user.
+  - `password`: the password of the user (hashed for security).
+  - `created_at`: the timestamp when the user was created.
+  - `updated_at`: the timestamp when the user was last updated.
+
+- The `notes` table has the following columns:
+  - `id`: a unique identifier for each note, which is an auto-incrementing integer.
+  - `title`: the title of the note.
+  - `content`: the content of the note.
+  - `user_id`: the foreign key referencing the `id` column in the `users` table, which represents the user who created the note.
+  - `created_at`: the timestamp when the note was created.
+  - `updated_at`: the timestamp when the note was last updated.
+
+### Example Use Cases
+
+- **Inserting a new user**:
+
+```sql
+INSERT INTO users (username, email, password) 
+VALUES ('john_doe', 'john@example.com', 'hashed_password');
+```
+
+- **Inserting a new note**:
+
+```sql
+INSERT INTO notes (title, content, user_id) 
+VALUES ('My Note', 'This is my note.', 1);
+```
+
+- **Getting all notes for a user**:
+
+```sql
+SELECT * 
+FROM notes 
+WHERE user_id = 1;
+```
+
+- **Updating a note**:
+
+```sql
+UPDATE notes 
+SET title = 'My Updated Note', 
+    content = 'This is my updated note.'
+WHERE id = 1;
+```
+
+### Database Migration
+
+To migrate the existing database schema, you can use the following SQL script:
+
+```sql
+-- Drop existing tables
+DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS users;
+
+-- Create users table
+CREATE TABLE users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create notes table
+CREATE TABLE notes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  user_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+This script will create the new tables with the correct schema and migrate the existing data from the old tables to the new ones.
