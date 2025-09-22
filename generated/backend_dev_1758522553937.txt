@@ -1,0 +1,1 @@
+Task completed: Design and implement new database tables for notes and users
