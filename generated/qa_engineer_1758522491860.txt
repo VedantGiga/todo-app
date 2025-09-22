@@ -1,0 +1,109 @@
+**Integration Testing for New Schema**
+
+To ensure the new schema is working correctly with other components, we'll create integration tests using a testing framework such as Jest. We'll assume that our schema is defined in a separate file (`schema.js`) and our application's logic is in another file (`app.js`).
+
+### **schema.js**
+```javascript
+// Import required libraries
+const { Schema, model } = require('mongoose');
+
+// Define the new schema
+const personSchema = new Schema({
+  name: String,
+  age: Number,
+});
+
+// Create a Mongoose model
+const Person = model('Person', personSchema);
+
+// Export the model
+module.exports = Person;
+```
+
+### **app.js**
+```javascript
+// Import required libraries
+const express = require('express');
+const mongoose = require('mongoose');
+const Person = require('./schema');
+
+// Create an Express app
+const app = express();
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Define a route to test the schema
+app.get('/person', async (req, res) => {
+  const person = await Person.findOne();
+  res.json(person);
+});
+
+// Start the server
+const server = app.listen(3000, () => {
+  console.log('Server listening on port 3000');
+});
+```
+
+### **person.test.js** (integration test)
+```javascript
+// Import required libraries
+const mongoose = require('mongoose');
+const Person = require('../schema');
+const supertest = require('supertest');
+const app = require('../app');
+
+// Before each test, connect to MongoDB and drop the collection
+beforeEach(async () => {
+  await mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });
+  await mongoose.connection.dropDatabase();
+});
+
+// After each test, close the MongoDB connection
+afterEach(async () => {
+  await mongoose.connection.close();
+});
+
+// Test that the schema is working correctly
+describe('Person Schema', () => {
+  it('should create a new person document', async () => {
+    // Create a new person document
+    const person = new Person({ name: 'John Doe', age: 30 });
+    await person.save();
+
+    // Test that the document was created
+    const response = await supertest(app).get('/person');
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe('John Doe');
+    expect(response.body.age).toBe(30);
+  });
+
+  it('should retrieve a person document by ID', async () => {
+    // Create a new person document
+    const person = new Person({ name: 'Jane Doe', age: 25 });
+    await person.save();
+
+    // Test that we can retrieve the document by ID
+    const response = await supertest(app).get(`/person/${person._id}`);
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe('Jane Doe');
+    expect(response.body.age).toBe(25);
+  });
+
+  it('should throw an error if the schema is invalid', async () => {
+    // Create a new person document with invalid data
+    const person = new Person({ name: 123, age: 'abc' });
+
+    // Test that the document creation fails
+    await expect(person.save()).rejects.toThrowError();
+  });
+});
+```
+
+In this example, we're using Jest to write integration tests for our schema. We're testing the following scenarios:
+
+*   Creating a new person document
+*   Retrieving a person document by ID
+*   Failing to create a person document with invalid data
+
+To run these tests, save the code in a new file (`person.test.js`) and run `jest` in your terminal. If all the tests pass, you can be confident that your schema is working correctly with other components.
