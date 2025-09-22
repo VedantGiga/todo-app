@@ -1,0 +1,1 @@
+Task completed: Create RESTful API endpoints for creating, reading, updating, and deleting notes
